@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
 
-<configuration scan="true" scanPeriod="30 seconds">
+<configuration scan="true" scanPeriod="2 hour">
 
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>
     </contextListener>
-    
+
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%-5level %logger{0} - %msg%n</pattern>
+            <pattern>%date [%thread] %-5level %logger{0} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!--<logger name="org.hibernate" level="debug"/> -->
-    <logger name="org.springframework.samples.petclinic" level="debug"/>
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+         <file>./log/petclinic.log</file>
+         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+         <!-- daily rollover -->
+             <fileNamePattern>./log/petclinic.%d{yyyy-MM-dd}.log</fileNamePattern>
+              <!-- keep 30 days' worth of history capped at 3GB total size -->
+              <maxHistory>30</maxHistory>
+              <totalSizeCap>1GB</totalSizeCap>
+          </rollingPolicy>
+          <encoder>
+              <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+          </encoder>
+    </appender>
 
-    <root level="info">
-        <appender-ref ref="console"/>
+    <!--<logger name="org.hibernate" level="debug"/> -->
+    <logger name="org.springframework.samples.petclinic" level="warn"/>
+
+    <root level="warn">
+        <appender-ref ref="file"/>
     </root>
 </configuration>
